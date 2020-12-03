@@ -1,0 +1,247 @@
+﻿@model IEnumerable<WebBanHangAPI.Models.mvcModels.mvcSanPhamCart>
+
+@{
+    ViewBag.Title = "Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    <link href="~/Scripts/Library_js/fontawesome-free-5.14.0-web/css/all.min.css" rel="stylesheet" />
+    
+    
+}
+
+<h2>Cart</h2>
+
+<div class="container">
+
+    <div style=" width: 60% ; margin: 0px auto ; background: #eae0e0 ; padding: 20px;" ; class="product">
+
+        @foreach (var item in Model)
+        {
+
+            <div id="CartPro"  class="row" style="border-bottom: 1px solid #ffffff">
+                <div class="col-md-3" style="padding: 10px;">
+                    <img style="width: 150px; height: 160px;" src="@item.Anh" />
+                </div>
+                <div class="col-md-9">
+                    <div style="margin-top: 20px;">
+                        <h3>@item.TenSP</h3>
+                        <h4 style="color: red">@string.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:c}", item.DonGia)</h4>
+                        <div id="inputQuantity">
+                            <button id="plus"  style="float:left" value= @item.IDSP class="plus btn btn-default" ><i class="fas fa-plus-circle"></i></button>
+                            <input class="quantity" style="float: left; text-align: center; height: 33px; border: none; background: #a9a4a4" value="@item.SoLuong" type="number" id="quantity" name="quantity" min="1" max="5" autocomplete="off" readonly />
+                            <button id="minus" value= @item.IDSP ; style="float:left" class="minus btn btn-default"><i class="fas fa-minus-circle"></i></button>
+                        </div>
+                        <div id="btnDelete" style="margin-top: 15px; text-align: right; clear: left;">
+                            <button id="remove" value= @item.IDSP class="remove btn btn-default"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        }
+        <div>
+            <h4 id="SumMoney" style="text-align: right; margin-top: 30px; color: red">
+            </h4>
+        </div>
+
+
+    </div>
+
+</div>
+
+@section scripts{
+
+    @Scripts.Render("~/bundles/jqueryval")
+   
+
+    <script>
+
+
+    const formatter = new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'VND',
+        minimumFractionDigits: 0
+    })
+
+   const tongTien = document.getElementById('SumMoney');
+
+    tongTien.innerHTML = "Tổng tiền: " + sum().toLocaleString('vi', { style: 'currency', currency: 'VND' });
+
+        function sum () {
+            var c = 0;
+            @foreach (var item in Model)
+            {
+                @:c += parseInt(@item.DonGia) * parseInt(@item.SoLuong) ;
+            }
+
+            return c;
+        }
+
+        function deletePropduct() {
+
+            var els = document.getElementsByClassName("remove");
+            for (var i = 0; i < els.length; i++) {
+                els[i].addEventListener('click', function (e) {
+                    debugger;
+                    e.preventDefault();
+                    var obid = e.target.closest("#btnDelete");
+                    var id = obid.children[0].value;
+
+                    $.ajax({
+                        type: "GET",
+                        url: "/ShareOutSide/DeleteProduct/" + id ,
+
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        error: function (object) {
+                            debugger
+                            alert("Xoa khong thanh công")
+                        },
+                        success: function (result) {
+                            debugger;
+                           
+                            var t = 0;
+                            for (var i = 0; i < result.length; i++)
+                                t += result[i].DonGia * result[i].SoLuong;
+                            debugger;
+                            tongTien.innerHTML = "Tổng tiền: " + t.toLocaleString('vi', { style: 'currency', currency: 'VND' });
+                            e.target.closest('#CartPro').remove();
+                            NumberCart();
+                        }
+                    });
+
+                    
+                   
+                });
+            }
+
+        }
+
+        deletePropduct();
+     
+
+       
+        function plus() {
+           
+            var els = document.getElementsByClassName("plus");
+
+            for (var i = 0; i < els.length; i++) {
+               
+                els[i].addEventListener('click', function (e) {
+                    debugger;
+                    e.preventDefault();
+                    var object2 = e.target.closest("#inputQuantity").children[0];
+                    var id = object2.value;
+                    debugger
+                    var object = e.target.closest("#inputQuantity").children[1];
+
+                    object.readOnly = true;
+                    if (object.value >= 20 )
+                        return;
+
+                    var c = parseInt(object.value);
+
+                    object.value = c + 1;
+                    $.ajax({
+                        type: "GET",
+                        url: "/ShareOutSide/EditCart/" + id + "/?" + "value=" + object.value  ,
+                       
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        error: function (object) {
+                            debugger
+                            alert("them khong thanh công")
+                        },
+                        success: function (result) {
+                            debugger;
+                            var t = 0;
+                            for (var i = 0; i < result.length; i++)
+                                t += result[i].DonGia * result[i].SoLuong;
+                            debugger;
+                            tongTien.innerHTML = "Tổng tiền: " + t.toLocaleString('vi', { style: 'currency', currency: 'VND' });
+                            NumberCart();
+                        }
+                    });
+                    e.preventDefault();
+                    debugger;                   
+                });
+            }
+        }
+
+        plus();
+
+        function minus() {
+            var els = document.getElementsByClassName("minus");
+
+            for (var i = 0; i < els.length; i++) {
+
+
+                els[i].addEventListener('click', function (e) {
+                    debugger;
+                    e.preventDefault();
+                    var object2 = e.target.closest("#inputQuantity").children[2];
+                    var id = object2.value;
+                    debugger
+                    var object = e.target.closest("#inputQuantity").children[1];
+
+                    object.readOnly = true;
+                    if (object.value <= 1)
+                        return;
+
+                    var c = parseInt(object.value);
+
+                    object.value = c - 1;
+
+                    $.ajax({
+                        type: "GET",
+                        url: "/ShareOutSide/EditCart/" + id + "/?" + "value=" + object.value,
+
+                        dataType: 'json',
+                        contentType: 'application/json; charset=utf-8',
+                        error: function (object) {
+                            debugger
+                            alert("Bot khong thanh công")
+                        },
+                        success: function (result) {
+                            var t = 0;
+                            for (var i = 0; i < result.length; i++)
+                                t += result[i].DonGia * result[i].SoLuong;
+                            tongTien.innerHTML = "Tổng tiền: " + t.toLocaleString('vi', { style: 'currency', currency: 'VND' });
+                            NumberCart();
+                        }
+                    });
+                   
+                    debugger;
+                });
+            }
+        }
+
+            minus();
+
+        function NumberCart() {
+            $.ajax({
+
+                type: "GET",
+                url: "/ShareOutSide/NumberCart",
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                error: function (object) {
+                    alert("Loi")
+                },
+                success: function (result) {
+                    numberCart.innerHTML = result;
+
+                }
+
+            });
+
+
+        }
+
+        NumberCart();
+        const numberCart = document.getElementById('numbercart');
+
+    </script>
+
+   
+}

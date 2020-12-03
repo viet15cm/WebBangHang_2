@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="../Content/MyCss/print-phieunhap.css" rel="stylesheet" />
+</head>
+<body>
+
+    <button id="print-from">Print</button>
+    <button id="close-from">Close</button>
+    <div id="page" class="page">
+        <div class="header">
+            <div class="logo"><img src="../IMAGES/logo.jpg" /></div>
+            <div class="company"><p>C.Ty TNHH Vsrmart</p><p id="code-from"></p></div>
+
+        </div>
+        <br />
+        <div class="title">
+            Phiếu Nhập Kho
+            <br />
+            -------oOo-------
+        </div>
+        <br />
+        <br />
+        <table class="TableData">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Mã</th>
+                    <th>Tên Sản Phẩm</th>
+                    <th>Số Lượng</th>
+                    <th>Đơn Giá</th>
+                    <th>Thành Tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <div class="footer-left">
+            <p>Khánh Hoa, ngày <span class="date">16</span> tháng <span class="month">12</span> năm <span class="year">2020</span></p>
+            <p id="code-nhacungcap"><span></span></p>
+        </div>
+        <div class="footer-right">
+            <p>Khánh Hoa, ngày <span class="date">16</span> tháng <span class="month">12</span> năm <span class="year">2020</span></p>
+            <p><span id="code-nhanvien"></span></p>
+        </div>
+    </div>
+
+
+    <script src="../Scripts/Library_js/Jquery/jquery-3.4.1.js"></script>
+    <script src="../Scripts/Library_js/print-jquery/printThis.js"></script>
+
+    <script src="../Scripts/MyJavascript/printf-from/PhieuNhapKho.js"></script>
+
+</body>
+</html>
